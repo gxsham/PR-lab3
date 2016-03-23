@@ -42,20 +42,18 @@ def addLine(event):
     canvas.create_line(lastx, lasty, event.x, event.y)
     
     sock.sendto(str(lastx) + ' ' + str(lasty) + ' ' + str(event.x) + ' ' + str(event.y) + ' ' + color, ('<broadcast>', PORT))
-    print lastx , lasty 
+    print lastx , lasty, color
     lastx, lasty = event.x, event.y
     
-#def dot(canvas, x, y):
-#	canvas.create_oval(x, y, x+1, y+1)
 
-
-    
 def worker(root, canvas):
 	while True:
 		result = select.select([s],[],[])      
 		msg = result[0][0].recv(1024) 
-		coordinates = msg.split(' ')        
-		canvas.create_line(int(coordinates[0]), int(coordinates[1]), int(coordinates[2]), int(coordinates[3]),fill = coordinates[4])
+		points = msg.split(' ') 
+              
+		canvas.create_line(int(points[0]), int(points[1]), int(points[2]), int(points[3]),fill = points[4])
+       
         
 
 
@@ -70,18 +68,15 @@ canvas.bind("<Button-1>", xy) #event, mouse-click
 canvas.bind("<B1-Motion>", addLine) #event, move mouse with a clicked button
 
 
-txt = canvas.create_text(10,10, fill = "white")
+#txt = canvas.create_text(10,10, fill = "white")
 
 def press_Yes():
-    canvas.itemconfigure(txt, text = "Yes")
-def press_No():
-    canvas.itemconfigure(txt, text = "No")
     canvas.delete("all")
 
-b = Button(canvas, text="Yes", command=press_Yes)
-c = Button(canvas, text = "No", command = press_No)
+
+b = Button(canvas, text="Delete Canvas", command=press_Yes)
+
 b.pack(side = TOP)
-c.pack(side = TOP)
 
 
 #start another thread, it will read stuff from the socket
